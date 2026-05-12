@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AdminLayout from './layout/AdminLayout';
 import Dashboard from './pages/Dashboard';
 import Candidates from './pages/Candidates';
+import AddCandidate from './pages/AddCandidate';
 import Clients from './pages/BusinessOwners';
 import './App.css';
 
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Dashboard />} />
           <Route path="/candidates" element={<Candidates />} />
+          <Route path="/candidates/add" element={<AddCandidate />} />
           <Route path="/clients" element={<Clients />} />
           
           {/* Placeholder for other routes */}

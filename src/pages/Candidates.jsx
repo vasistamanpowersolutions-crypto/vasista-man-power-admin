@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   Search, Filter, Plus, Mail, Phone, MapPin, 
@@ -10,6 +11,7 @@ import './Candidates.css';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 const Candidates = () => {
+  const navigate = useNavigate();
   const [candidates, setCandidates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -51,7 +53,7 @@ const Candidates = () => {
           <button className="icon-btn-secondary" onClick={fetchCandidates} disabled={loading}>
             <RefreshCw size={18} className={loading ? 'spin' : ''} />
           </button>
-          <button className="btn-primary">
+          <button className="btn-primary" onClick={() => navigate('/candidates/add')}>
             <Plus size={18} /> Add Candidate
           </button>
         </div>
