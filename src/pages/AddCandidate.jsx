@@ -40,6 +40,10 @@ const AddCandidate = () => {
     emergencyContactName: '',
     emergencyContactRelation: '',
     emergencyContactMobile: '',
+
+    // Status Information
+    candidateStatus: 'available',
+    kycStatus: 'in progress',
   });
 
   const [images, setImages] = useState({
@@ -622,6 +626,49 @@ const AddCandidate = () => {
               pattern="[0-9]{10}"
               required
             />
+          </div>
+        </div>
+        {/* Status Information Section */}
+        <div className="form-section">
+          <div className="section-header">
+            <h2>Status Information</h2>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">
+                Allotment Status <span className="required">*</span>
+              </label>
+              <select
+                name="candidateStatus"
+                value={formData.candidateStatus}
+                onChange={handleInputChange}
+                className="form-input"
+                required
+              >
+                <option value="available">Available</option>
+                <option value="allotted">Allotted</option>
+                <option value="on-leave">On Leave</option>
+                <option value="resigned">Resigned</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">
+                KYC Status <span className="required">*</span>
+              </label>
+              <select
+                name="kycStatus"
+                value={formData.kycStatus}
+                onChange={handleInputChange}
+                className="form-input"
+                required
+              >
+                <option value="in progress">In Progress</option>
+                <option value="verified">Verified</option>
+                <option value="rejected">Rejected</option>
+                <option value="pending">Pending</option>
+              </select>
+            </div>
           </div>
         </div>
 

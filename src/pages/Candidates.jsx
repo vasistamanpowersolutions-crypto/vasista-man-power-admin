@@ -104,7 +104,7 @@ const Candidates = () => {
                 </tr>
               ) : (
                 candidates.map((can) => (
-                  <tr key={can.id}>
+                  <tr key={can.id} onClick={() => navigate(`/candidates/${can.id}`)} style={{ cursor: 'pointer' }}>
                     <td>
                       <div className="user-info-cell">
                         <div className="avatar-small">{can.firstName[0]}</div>
@@ -137,9 +137,17 @@ const Candidates = () => {
                     </td>
                     <td>
                       <div className="action-row">
-                        <button className="action-icon view"><Eye size={16} /></button>
-                        <button className="action-icon edit"><Edit size={16} /></button>
-                        <button className="action-icon delete"><Trash2 size={16} /></button>
+                        <button 
+                          className="action-icon view" 
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/candidates/${can.id}`);
+                          }}
+                        >
+                          <Eye size={16} />
+                        </button>
+                        <button className="action-icon edit" onClick={(e) => e.stopPropagation()}><Edit size={16} /></button>
+                        <button className="action-icon delete" onClick={(e) => e.stopPropagation()}><Trash2 size={16} /></button>
                       </div>
                     </td>
                   </tr>
