@@ -8,9 +8,12 @@ import {
 } from 'lucide-react';
 import './Candidates.css'; // Reusing some table styles, but will add specific ones if needed
 
+import { useNavigate } from 'react-router-dom';
+
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
 const Clients = () => {
+  const navigate = useNavigate();
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,15 +32,29 @@ const Clients = () => {
       setClients(response.data);
     } catch (error) {
       console.error('Error fetching clients:', error);
-      // Fallback dummy data
-      setClients([
-        { id: 'BUS-1001', businessName: 'ABC Pvt. Ltd.', businessCategory: 'Construction', phone: '9876500101', email: 'contact@abc.com', city: 'Nellore', employeeCount: 128, status: 'Active' },
-        { id: 'BUS-1002', businessName: 'XYZ Industries', businessCategory: 'Manufacturing', phone: '9876500102', email: 'hr@xyz.com', city: 'Hyderabad', employeeCount: 94, status: 'Active' },
-        { id: 'BUS-1003', businessName: 'Tech Solutions', businessCategory: 'IT Services', phone: '9876500103', email: 'jobs@techsol.com', city: 'Bangalore', employeeCount: 76, status: 'Active' },
-        { id: 'BUS-1004', businessName: 'Global Logistics', businessCategory: 'Logistics', phone: '9876500104', email: 'admin@global.com', city: 'Chennai', employeeCount: 64, status: 'Active' },
-      ]);
+      setClients([]); // Set to empty array if call fails
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (e, id) => {
+    e.stopPropagation();
+    if (window.confirm('Are you sure you want to delete this business client?')) {
+      try {
+        setLoading(true);
+        const secret = import.meta.env.VITE_ADMIN_SECRET_KEY;
+        await axios.delete(`${API_URL}/businesses/${id}`, {
+          headers: { 'x-admin-secret': secret }
+        });
+        setClients(clients.filter(c => c.id !== id));
+        alert('Client deleted successfully');
+      } catch (error) {
+        console.error('Error deleting client:', error);
+        alert('Failed to delete client');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -52,7 +69,7 @@ const Clients = () => {
           <button className="icon-btn-secondary" onClick={fetchClients} disabled={loading}>
             <RefreshCw size={18} className={loading ? 'spin' : ''} />
           </button>
-          <button className="btn-primary">
+          <button className="btn-primary" onClick={() => navigate('/clients/add')}>
             <Plus size={18} /> Add Client
           </button>
         </div>
@@ -103,7 +120,7 @@ const Clients = () => {
                 </tr>
               ) : (
                 clients.map((client) => (
-                  <tr key={client.id}>
+                  <tr key={client.id} onClick={() => navigate(`/clients/${client.id}`)} style={{ cursor: 'pointer' }}>
                     <td>
                       <div className="user-info-cell">
                         <div className="avatar-small" style={{ backgroundColor: '#F2972715', color: '#F29727' }}>
@@ -120,7 +137,7 @@ const Clients = () => {
                     </td>
                     <td>
                       <div className="contact-info">
-                        <span><Phone size={12} /> {client.phone}</span>
+                        <span><Phone size={12} /> {client.phone || client.mobileNumber}</span>
                         <span className="email"><Mail size={12} /> {client.email || 'N/A'}</span>
                       </div>
                     </td>
@@ -137,9 +154,9 @@ const Clients = () => {
                     </td>
                     <td>
                       <div className="action-row">
-                        <button className="action-icon view"><Eye size={16} /></button>
-                        <button className="action-icon edit"><Edit size={16} /></button>
-                        <button className="action-icon delete"><Trash2 size={16} /></button>
+                        <button className="action-icon view" onClick={() => navigate(`/clients/${client.id}`)}><Eye size={16} /></button>
+                        <button className="action-icon edit" onClick={(e) => { e.stopPropagation(); /* edit logic */ }}><Edit size={16} /></button>
+                        <button className="action-icon delete" onClick={(e) => handleDelete(e, client.id)}><Trash2 size={16} /></button>
                       </div>
                     </td>
                   </tr>

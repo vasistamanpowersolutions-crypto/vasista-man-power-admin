@@ -6,6 +6,8 @@ import Candidates from './pages/Candidates';
 import CandidateDetails from './pages/CandidateDetails';
 import AddCandidate from './pages/AddCandidate';
 import Clients from './pages/BusinessOwners';
+import AddBusinessOwner from './pages/AddBusinessOwner';
+import BusinessOwnerDetails from './pages/BusinessOwnerDetails';
 import './App.css';
 
 function App() {
@@ -18,6 +20,8 @@ function App() {
           <Route path="/candidates/add" element={<AddCandidate />} />
           <Route path="/candidates/:id" element={<CandidateDetails />} />
           <Route path="/clients" element={<Clients />} />
+          <Route path="/clients/add" element={<AddBusinessOwner />} />
+          <Route path="/clients/:id" element={<BusinessOwnerDetails />} />
           
           {/* Placeholder for other routes */}
           <Route path="/jobs" element={<div className="page-placeholder"><h2>Jobs Management</h2><p>Coming Soon...</p></div>} />
