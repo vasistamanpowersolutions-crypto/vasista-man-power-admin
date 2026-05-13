@@ -32,10 +32,10 @@ const Candidates = () => {
       console.error('Error fetching candidates:', error);
       // Fallback dummy data for demo if API fails
       setCandidates([
-        { id: 'CAN-82341', firstName: 'Rahul', lastName: 'Kumar', phone: '9876543210', email: 'rahul@example.com', candidateStatus: 'Available', kycStatus: 'Verified', city: 'Nellore' },
-        { id: 'CAN-82342', firstName: 'Priya', lastName: 'Sharma', phone: '9876543211', email: 'priya@example.com', candidateStatus: 'Placed', kycStatus: 'Verified', city: 'Hyderabad' },
-        { id: 'CAN-82343', firstName: 'Anil', lastName: 'Reddy', phone: '9876543212', email: 'anil@example.com', candidateStatus: 'Available', kycStatus: 'Pending', city: 'Tirupati' },
-        { id: 'CAN-82344', firstName: 'Sneha', lastName: 'Latha', phone: '9876543213', email: 'sneha@example.com', candidateStatus: 'In Process', kycStatus: 'Verified', city: 'Vijayawada' },
+        { id: 'CAN-82341', firstName: 'Rahul', lastName: 'Kumar', mobileNumber: '9876543210', email: 'rahul@example.com', candidateStatus: 'Available', kycStatus: 'Verified', city: 'Nellore' },
+        { id: 'CAN-82342', firstName: 'Priya', lastName: 'Sharma', mobileNumber: '9876543211', email: 'priya@example.com', candidateStatus: 'Placed', kycStatus: 'Verified', city: 'Hyderabad' },
+        { id: 'CAN-82343', firstName: 'Anil', lastName: 'Reddy', mobileNumber: '9876543212', email: 'anil@example.com', candidateStatus: 'Available', kycStatus: 'Pending', city: 'Tirupati' },
+        { id: 'CAN-82344', firstName: 'Sneha', lastName: 'Latha', mobileNumber: '9876543213', email: 'sneha@example.com', candidateStatus: 'In Process', kycStatus: 'Verified', city: 'Vijayawada' },
       ]);
     } finally {
       setLoading(false);
@@ -116,7 +116,7 @@ const Candidates = () => {
                     </td>
                     <td>
                       <div className="contact-info">
-                        <span><Phone size={12} /> {can.phone}</span>
+                        <span><Phone size={12} /> {can.mobileNumber}</span>
                         <span className="email"><Mail size={12} /> {can.email || 'N/A'}</span>
                       </div>
                     </td>

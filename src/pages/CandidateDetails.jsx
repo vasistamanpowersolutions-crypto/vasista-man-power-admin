@@ -188,7 +188,7 @@ const CandidateDetails = () => {
         <div className="data-row"><span className="data-label">Full Name</span><span className="data-value">{candidate.firstName} {candidate.lastName}</span></div>
         <div className="data-row"><span className="data-label">Mobile</span><span className="data-value">{candidate.mobileNumber}</span></div>
         <div className="data-row"><span className="data-label">Email</span><span className="data-value">{candidate.email || 'N/A'}</span></div>
-        <div className="data-row"><span className="data-label">DOB</span><span className="data-value">{candidate.dob}</span></div>
+        <div className="data-row"><span className="data-label">DOB</span><span className="data-value">{candidate.dateOfBirth}</span></div>
         <div className="data-row"><span className="data-label">Address</span><span className="data-value">{candidate.address}, {candidate.city}, {candidate.state}</span></div>
       </div>
 
@@ -275,9 +275,10 @@ const CandidateDetails = () => {
 
   const renderDocumentsTab = () => {
     const docs = [
-      { id: 'd1', title: 'Aadhar Front', url: candidate.aadharFrontUrl },
-      { id: 'd2', title: 'Aadhar Back', url: candidate.aadharBackUrl },
-      { id: 'd3', title: 'Profile Photo', url: candidate.profileImageUrl },
+      { id: 'd1', title: 'Aadhar Front', url: candidate.aadharFront },
+      { id: 'd2', title: 'Aadhar Back', url: candidate.aadharBack },
+      { id: 'd3', title: 'PAN Card', url: candidate.panCard },
+      { id: 'd4', title: 'Profile Photo', url: candidate.profilePhoto },
     ];
     return (
       <div className="docs-grid">
@@ -311,7 +312,7 @@ const CandidateDetails = () => {
           <button className="back-btn" onClick={() => navigate('/candidates')}><ArrowLeft size={20} /></button>
           <div className="candidate-profile-summary">
             <div className="large-avatar">
-              {candidate.profileImageUrl ? <img src={candidate.profileImageUrl} alt="Profile" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={32} />}
+              {candidate.profilePhoto ? <img src={candidate.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', borderRadius: '50%', objectFit: 'cover' }} /> : <User size={32} />}
             </div>
             <div className="summary-info">
               <h1>{candidate.firstName} {candidate.lastName}</h1>
@@ -350,7 +351,7 @@ const CandidateDetails = () => {
                 <div className="form-group"><label>Last Name</label><input name="lastName" value={editData.lastName} onChange={handleEditChange} className="form-control" /></div>
                 <div className="form-group"><label>Mobile</label><input name="mobileNumber" value={editData.mobileNumber} onChange={handleEditChange} className="form-control" /></div>
                 <div className="form-group"><label>Email</label><input name="email" value={editData.email} onChange={handleEditChange} className="form-control" /></div>
-                <div className="form-group"><label>DOB</label><input name="dob" type="date" value={editData.dob} onChange={handleEditChange} className="form-control" /></div>
+                <div className="form-group"><label>DOB</label><input name="dateOfBirth" type="date" value={editData.dateOfBirth} onChange={handleEditChange} className="form-control" /></div>
                 <div className="form-group" style={{ gridColumn: 'span 2' }}><label>Address</label><textarea name="address" value={editData.address} onChange={handleEditChange} className="form-control" rows="2" /></div>
               </>
             )}
