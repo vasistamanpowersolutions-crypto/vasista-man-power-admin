@@ -284,6 +284,64 @@
   cursor: not-allowed;
 }
 
-.p-btn:not(.active):not(.disabled):hover {
-  background: var(--background);
+@media (max-width: 1024px) {
+  .search-box { width: 220px; }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .btn-primary {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .toolbar-right {
+    justify-content: space-between;
+  }
+
+  .toolbar-right .btn-secondary {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .data-table th, 
+  .data-table td {
+    padding: 10px 12px;
+  }
+
+  .user-id {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-info h1 {
+    font-size: 16px;
+  }
+
+  .pagination-footer {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
 }

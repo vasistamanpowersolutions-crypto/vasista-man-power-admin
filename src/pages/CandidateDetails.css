@@ -534,8 +534,89 @@
   margin-top: 16px;
 }
 
-@media (max-width: 900px) {
-  .info-grid {
+@media (max-width: 1024px) {
+  .details-tabs {
+    width: 100%;
+    overflow-x: auto;
+    white-space: nowrap;
+    padding: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .details-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tab-btn {
+    padding: 8px 16px;
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .candidate-details-page {
+    padding: 16px;
+  }
+
+  .details-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .header-left {
+    width: 100%;
+  }
+
+  .candidate-profile-summary {
+    gap: 12px;
+  }
+
+  .large-avatar {
+    width: 48px;
+    height: 48px;
+    font-size: 18px;
+  }
+
+  .summary-info h1 {
+    font-size: 18px;
+  }
+
+  .summary-info p {
+    font-size: 12px;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .delete-btn {
+    flex: 1;
+    justify-content: center;
+  }
+
+  .data-row {
     grid-template-columns: 1fr;
+    gap: 4px;
+    margin-bottom: 12px;
+  }
+
+  .info-section {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .status-badges {
+    flex-wrap: wrap;
+  }
+
+  .doc-card {
+    padding: 12px;
+  }
+
+  .doc-preview {
+    height: 150px;
   }
 }

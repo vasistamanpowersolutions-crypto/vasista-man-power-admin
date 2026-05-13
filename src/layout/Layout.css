@@ -269,16 +269,121 @@
 }
 
 
+/* Sidebar Backdrop */
+.sidebar-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(4px);
+  z-index: 95;
+  opacity: 0;
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.sidebar-backdrop.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sidebar-close-btn {
+  display: none;
+  color: white;
+  opacity: 0.7;
+}
+
+/* Mobile Utilities */
+.mobile-hide {
+  display: block;
+}
+
 @media (max-width: 1024px) {
-  .search-bar { width: 200px; }
-  .welcome-text h2 { font-size: 20px; }
+  .search-bar { width: 180px; }
+  .welcome-text h2 { font-size: 16px; }
+  .content-viewport { padding: 0 16px 16px 16px; }
 }
 
 @media (max-width: 768px) {
-  .sidebar {
-    position: absolute;
-    left: -260px;
+  .mobile-hide {
+    display: none !important;
   }
-  .sidebar.open { left: 0; }
-  .search-bar { display: none; }
+
+  .sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    bottom: 0;
+    width: 280px !important;
+    z-index: 100;
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.1);
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .sidebar-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+
+  .sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .main-header {
+    padding: 12px 16px;
+  }
+
+  .welcome-text h2 {
+    font-size: 15px;
+  }
+
+  .content-viewport {
+    padding: 0 12px 12px 12px;
+  }
+
+  .footer-credits {
+    padding: 12px 16px;
+    justify-content: center;
+  }
+
+  .nav-label {
+    display: block !important;
+  }
+
+  .logo-text {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .welcome-text h2 {
+    max-width: 150px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  
+  .header-right {
+    gap: 8px;
+  }
+
+  .icon-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .avatar-circle {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
 }
