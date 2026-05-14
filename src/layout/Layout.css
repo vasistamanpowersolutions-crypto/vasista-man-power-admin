@@ -94,6 +94,36 @@
 .sidebar-footer {
   padding: 16px;
   border-top: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.logout-btn-sidebar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.05);
+  border: none;
+  width: 100%;
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+}
+
+.logout-btn-sidebar:hover {
+  background: rgba(244, 67, 54, 0.1);
+  color: #ff5252;
+}
+
+.sidebar.closed .logout-btn-sidebar {
+  justify-content: center;
+  padding: 10px;
 }
 
 .user-profile-mini {

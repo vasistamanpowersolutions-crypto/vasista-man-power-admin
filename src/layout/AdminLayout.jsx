@@ -6,12 +6,14 @@ import {
   BarChart3, Settings, LogOut, Search, Bell, Menu,
   ChevronDown, X
 } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 import './Layout.css';
 import logo from '../assets/logo.jpeg';
 
 const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
   const location = useLocation();
+  const { currentUser, logout } = useAuth();
 
   useEffect(() => {
     const handleResize = () => {
@@ -38,6 +40,14 @@ const AdminLayout = ({ children }) => {
   const handleNavClick = () => {
     if (window.innerWidth <= 768) {
       setSidebarOpen(false);
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Failed to log out', error);
     }
   };
 
@@ -79,10 +89,16 @@ const AdminLayout = ({ children }) => {
         </nav>
 
         <div className="sidebar-footer">
+          <button className="logout-btn-sidebar" onClick={handleLogout}>
+            <LogOut size={20} />
+            <span className="nav-label">Logout</span>
+          </button>
           <div className="user-profile-mini">
-            <div className="avatar-circle">AU</div>
+            <div className="avatar-circle">
+              {currentUser?.email?.charAt(0).toUpperCase() || 'A'}
+            </div>
             <div className="user-info-text">
-              <span className="user-name">Admin User</span>
+              <span className="user-name">{currentUser?.email?.split('@')[0] || 'Admin'}</span>
               <span className="user-role">Administrator</span>
             </div>
           </div>
@@ -98,7 +114,7 @@ const AdminLayout = ({ children }) => {
               <Menu size={24} />
             </button>
             <div className="welcome-text">
-              <h2>Welcome back, Admin!</h2>
+              <h2>Welcome back, {currentUser?.email?.split('@')[0] || 'Admin'}!</h2>
               <p className="mobile-hide">Here's what's happening with your business today.</p>
             </div>
           </div>
@@ -114,13 +130,15 @@ const AdminLayout = ({ children }) => {
               <span className="notif-dot"></span>
             </button>
 
-            <div className="user-dropdown">
-              <div className="avatar-circle">AU</div>
+            <div className="user-dropdown" onClick={handleLogout} style={{ cursor: 'pointer' }} title="Click to logout">
+              <div className="avatar-circle">
+                {currentUser?.email?.charAt(0).toUpperCase() || 'A'}
+              </div>
               <div className="user-meta mobile-hide">
-                <span className="name">Admin User</span>
+                <span className="name">{currentUser?.email?.split('@')[0] || 'Admin'}</span>
                 <span className="role">Administrator</span>
               </div>
-              <ChevronDown size={16} className="mobile-hide" />
+              <LogOut size={16} className="mobile-hide" style={{ marginLeft: '10px', opacity: 0.7 }} />
             </div>
           </div>
         </header>
