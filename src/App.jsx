@@ -11,9 +11,14 @@ import Clients from './pages/BusinessOwners';
 import AddBusinessOwner from './pages/AddBusinessOwner';
 import BusinessOwnerDetails from './pages/BusinessOwnerDetails';
 import Login from './pages/Login';
+import { initSecurity } from './utils/security';
 import './App.css';
 
 function App() {
+  React.useEffect(() => {
+    initSecurity();
+  }, []);
+
   return (
     <Router>
       <AuthProvider>
