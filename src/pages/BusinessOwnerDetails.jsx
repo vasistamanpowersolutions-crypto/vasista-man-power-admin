@@ -194,6 +194,7 @@ const BusinessOwnerDetails = () => {
         <div className="data-row"><span className="data-label">Mobile</span><span className="data-value">{business.mobileNumber}</span></div>
         <div className="data-row"><span className="data-label">Email</span><span className="data-value">{business.email || 'N/A'}</span></div>
         <div className="data-row"><span className="data-label">Address</span><span className="data-value">{business.address}</span></div>
+        <div className="data-row"><span className="data-label">Wanted Roles</span><span className="data-value">{business.wantedJobRoles || 'N/A'}</span></div>
       </div>
 
       <div className="info-section">
@@ -352,6 +353,10 @@ const BusinessOwnerDetails = () => {
             <div className="form-group" style={{ gridColumn: 'span 2' }}>
               <label>Address</label>
               <textarea name="address" value={editData.address} onChange={handleEditChange} className="form-control" rows="2" />
+            </div>
+            <div className="form-group" style={{ gridColumn: 'span 2' }}>
+              <label>Wanted Job Roles (Comma separated)</label>
+              <textarea name="wantedJobRoles" value={editData.wantedJobRoles} onChange={handleEditChange} className="form-control" rows="2" />
             </div>
           </div>
           <div className="modal-footer">

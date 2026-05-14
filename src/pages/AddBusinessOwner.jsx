@@ -21,6 +21,9 @@ const AddBusinessOwner = () => {
     email: '',
     ownerName: '',
     address: '',
+    city: '',
+    state: '',
+    wantedJobRoles: '',
     docType: 'GST', // Default
   });
 
@@ -212,6 +215,20 @@ const AddBusinessOwner = () => {
           <div className="form-group">
             <label className="form-label">Business Address</label>
             <textarea name="address" value={formData.address} onChange={handleInputChange} className="form-input" rows="2" placeholder="Full office address"></textarea>
+          </div>
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">City</label>
+              <input type="text" name="city" value={formData.city} onChange={handleInputChange} className="form-input" placeholder="City" />
+            </div>
+            <div className="form-group">
+              <label className="form-label">State</label>
+              <input type="text" name="state" value={formData.state} onChange={handleInputChange} className="form-input" placeholder="State" />
+            </div>
+          </div>
+          <div className="form-group">
+            <label className="form-label">Wanted Job Roles (Comma separated)</label>
+            <textarea name="wantedJobRoles" value={formData.wantedJobRoles} onChange={handleInputChange} className="form-input" rows="2" placeholder="e.g. Security Guard, Housekeeping, Delivery Boy"></textarea>
           </div>
         </div>
 
