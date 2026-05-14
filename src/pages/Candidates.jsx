@@ -131,7 +131,7 @@ const Candidates = () => {
                       </span>
                     </td>
                     <td>
-                      <span className={`kyc-badge ${can.kycStatus?.toLowerCase() || 'pending'}`}>
+                      <span className={`kyc-badge ${can.kycStatus?.toLowerCase().replace(/ /g, '-') || 'pending'}`}>
                         <ShieldCheck size={14} /> {can.kycStatus || 'Pending'}
                       </span>
                     </td>

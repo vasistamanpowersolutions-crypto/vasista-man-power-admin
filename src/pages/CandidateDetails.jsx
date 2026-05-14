@@ -187,9 +187,9 @@ const CandidateDetails = () => {
         </div>
         <div className="data-row"><span className="data-label">Full Name</span><span className="data-value">{candidate.firstName} {candidate.lastName}</span></div>
         <div className="data-row"><span className="data-label">Mobile</span><span className="data-value">{candidate.mobileNumber}</span></div>
-        <div className="data-row"><span className="data-label">Email</span><span className="data-value">{candidate.email || 'N/A'}</span></div>
-        <div className="data-row"><span className="data-label">DOB</span><span className="data-value">{candidate.dateOfBirth}</span></div>
-        <div className="data-row"><span className="data-label">Address</span><span className="data-value">{candidate.address}, {candidate.city}, {candidate.state}</span></div>
+        <div className="data-row"><span className="data-label">Father's Name</span><span className="data-value">{candidate.fatherName || 'N/A'}</span></div>
+        <div className="data-row"><span className="data-label">Father's Mobile</span><span className="data-value">{candidate.fatherMobileNumber || 'N/A'}</span></div>
+        <div className="data-row"><span className="data-label">Address</span><span className="data-value">{candidate.address || 'N/A'}, {candidate.city}, {candidate.state}</span></div>
       </div>
 
       <div className="info-section">
@@ -197,8 +197,16 @@ const CandidateDetails = () => {
           <div className="title-left"><Briefcase size={20} /> Professional Details</div>
           <button className="edit-section-btn" onClick={() => handleEditClick('Professional')}><Edit2 size={14} /></button>
         </div>
-        <div className="data-row"><span className="data-label">Qualification</span><span className="data-value">{candidate.qualification}</span></div>
-        <div className="data-row"><span className="data-label">Experience</span><span className="data-value">{candidate.experience}</span></div>
+        <div className="data-row"><span className="data-label">Job Type</span><span className="data-value">{candidate.type || 'N/A'}</span></div>
+        <div className="data-row"><span className="data-label">Exp Level</span><span className="data-value">{candidate.experienceLevel || 'N/A'}</span></div>
+        {candidate.experienceLevel === 'Experienced' && (
+          <>
+            <div className="data-row"><span className="data-label">Prev Job</span><span className="data-value">{candidate.previousJobTitle || 'N/A'}</span></div>
+            <div className="data-row"><span className="data-label">Exp Years</span><span className="data-value">{candidate.experienceYears || '0'}</span></div>
+          </>
+        )}
+        <div className="data-row"><span className="data-label">Wanted Jobs</span><span className="data-value">{candidate.wantedJobTitle || 'N/A'}</span></div>
+        <div className="data-row"><span className="data-label">Skills</span><span className="data-value">{candidate.skills || 'N/A'}</span></div>
       </div>
 
       <div className="info-section">
@@ -206,19 +214,10 @@ const CandidateDetails = () => {
           <div className="title-left"><CreditCard size={20} /> Status & Identity</div>
           <button className="edit-section-btn" onClick={() => handleEditClick('Identity')}><Edit2 size={14} /></button>
         </div>
-        <div className="data-row"><span className="data-label">Allotment</span><span className={`status-pill ${candidate.candidateStatus?.toLowerCase()}`}>{candidate.candidateStatus}</span></div>
+        <div className="data-row"><span className="data-label">Status</span><span className={`status-pill ${candidate.candidateStatus?.toLowerCase().replace(/ /g, '-')}`}>{candidate.candidateStatus}</span></div>
         <div className="data-row"><span className="data-label">KYC Status</span><span className={`kyc-badge ${candidate.kycStatus?.toLowerCase().replace(/ /g, '-')}`}>{candidate.kycStatus}</span></div>
-        <div className="data-row"><span className="data-label">Aadhar Number</span><span className="data-value">{candidate.aadharNumber}</span></div>
-      </div>
-
-      <div className="info-section">
-        <div className="section-title">
-          <div className="title-left"><Users size={20} /> Guardian Information</div>
-          <button className="edit-section-btn" onClick={() => handleEditClick('Guardian')}><Edit2 size={14} /></button>
-        </div>
-        <div className="data-row"><span className="data-label">Guardian Name</span><span className="data-value">{candidate.guardianName}</span></div>
-        <div className="data-row"><span className="data-label">Relation</span><span className="data-value">{candidate.guardianRelation}</span></div>
-        <div className="data-row"><span className="data-label">Guardian Mobile</span><span className="data-value">{candidate.guardianMobile}</span></div>
+        <div className="data-row"><span className="data-label">Aadhar Number</span><span className="data-value">{candidate.aadharNumber || 'N/A'}</span></div>
+        <div className="data-row"><span className="data-label">PAN Number</span><span className="data-value">{candidate.panNumber || 'N/A'}</span></div>
       </div>
     </div>
   );
@@ -316,9 +315,9 @@ const CandidateDetails = () => {
             </div>
             <div className="summary-info">
               <h1>{candidate.firstName} {candidate.lastName}</h1>
-              <p><span>UID: {candidate.uid}</span><span className="dot"></span><span>Role: {candidate.role}</span></p>
+              <p><span>ID: {candidate.candidateId || candidate.id}</span><span className="dot"></span><span>Type: {candidate.type || 'Candidate'}</span></p>
               <div className="status-badges">
-                <span className={`status-pill ${candidate.candidateStatus?.toLowerCase()}`}>{candidate.candidateStatus}</span>
+                <span className={`status-pill ${candidate.candidateStatus?.toLowerCase().replace(/ /g, '-')}`}>{candidate.candidateStatus}</span>
                 <span className={`kyc-badge ${candidate.kycStatus?.toLowerCase().replace(/ /g, '-')}`}><ShieldCheck size={14} /> {candidate.kycStatus}</span>
               </div>
             </div>
@@ -350,16 +349,33 @@ const CandidateDetails = () => {
                 <div className="form-group"><label>First Name</label><input name="firstName" value={editData.firstName} onChange={handleEditChange} className="form-control" /></div>
                 <div className="form-group"><label>Last Name</label><input name="lastName" value={editData.lastName} onChange={handleEditChange} className="form-control" /></div>
                 <div className="form-group"><label>Mobile</label><input name="mobileNumber" value={editData.mobileNumber} onChange={handleEditChange} className="form-control" /></div>
-                <div className="form-group"><label>Email</label><input name="email" value={editData.email} onChange={handleEditChange} className="form-control" /></div>
-                <div className="form-group"><label>DOB</label><input name="dateOfBirth" type="date" value={editData.dateOfBirth} onChange={handleEditChange} className="form-control" /></div>
+                <div className="form-group"><label>Father Name</label><input name="fatherName" value={editData.fatherName} onChange={handleEditChange} className="form-control" /></div>
+                <div className="form-group"><label>Father Mobile</label><input name="fatherMobileNumber" value={editData.fatherMobileNumber} onChange={handleEditChange} className="form-control" /></div>
                 <div className="form-group" style={{ gridColumn: 'span 2' }}><label>Address</label><textarea name="address" value={editData.address} onChange={handleEditChange} className="form-control" rows="2" /></div>
+                <div className="form-group"><label>City</label><input name="city" value={editData.city} onChange={handleEditChange} className="form-control" /></div>
+                <div className="form-group"><label>State</label><input name="state" value={editData.state} onChange={handleEditChange} className="form-control" /></div>
+              </>
+            )}
+            {editSection === 'Professional' && (
+              <>
+                <div className="form-group"><label>Job Type</label><select name="type" value={editData.type} onChange={handleEditChange} className="form-control"><option value="Full-time">Full-time</option><option value="Part-time">Part-time</option></select></div>
+                <div className="form-group"><label>Experience Level</label><select name="experienceLevel" value={editData.experienceLevel} onChange={handleEditChange} className="form-control"><option value="Fresher">Fresher</option><option value="Experienced">Experienced</option></select></div>
+                {editData.experienceLevel === 'Experienced' && (
+                  <>
+                    <div className="form-group"><label>Prev Job</label><input name="previousJobTitle" value={editData.previousJobTitle} onChange={handleEditChange} className="form-control" /></div>
+                    <div className="form-group"><label>Exp Years</label><input name="experienceYears" value={editData.experienceYears} onChange={handleEditChange} className="form-control" /></div>
+                  </>
+                )}
+                <div className="form-group" style={{ gridColumn: 'span 2' }}><label>Wanted Jobs</label><textarea name="wantedJobTitle" value={editData.wantedJobTitle} onChange={handleEditChange} className="form-control" rows="2" /></div>
+                <div className="form-group" style={{ gridColumn: 'span 2' }}><label>Skills</label><textarea name="skills" value={editData.skills} onChange={handleEditChange} className="form-control" rows="2" /></div>
               </>
             )}
             {editSection === 'Identity' && (
               <>
-                <div className="form-group"><label>Allotment Status</label><select name="candidateStatus" value={editData.candidateStatus} onChange={handleEditChange} className="form-control"><option value="available">Available</option><option value="allotted">Allotted</option><option value="on-leave">On Leave</option><option value="resigned">Resigned</option></select></div>
-                <div className="form-group"><label>KYC Status</label><select name="kycStatus" value={editData.kycStatus} onChange={handleEditChange} className="form-control"><option value="in progress">In Progress</option><option value="verified">Verified</option><option value="rejected">Rejected</option><option value="pending">Pending</option></select></div>
-                <div className="form-group" style={{ gridColumn: 'span 2' }}><label>Aadhar Number</label><input name="aadharNumber" value={editData.aadharNumber} onChange={handleEditChange} className="form-control" /></div>
+                <div className="form-group"><label>Candidate Status</label><select name="candidateStatus" value={editData.candidateStatus} onChange={handleEditChange} className="form-control"><option value="Open to Work">Open to Work</option><option value="allotted">Allotted</option><option value="on-leave">On Leave</option><option value="resigned">Resigned</option></select></div>
+                <div className="form-group"><label>KYC Status</label><select name="kycStatus" value={editData.kycStatus} onChange={handleEditChange} className="form-control"><option value="Pending">Pending</option><option value="Verification in Progress">Verification in Progress</option><option value="Verified">Verified</option><option value="Rejected">Rejected</option></select></div>
+                <div className="form-group"><label>Aadhar Number</label><input name="aadharNumber" value={editData.aadharNumber} onChange={handleEditChange} className="form-control" /></div>
+                <div className="form-group"><label>PAN Number</label><input name="panNumber" value={editData.panNumber} onChange={handleEditChange} className="form-control" /></div>
               </>
             )}
           </div>

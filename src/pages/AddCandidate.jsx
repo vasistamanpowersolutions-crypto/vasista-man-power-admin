@@ -17,33 +17,35 @@ const AddCandidate = () => {
   const [messageType, setMessageType] = useState('');
 
   const [formData, setFormData] = useState({
-    // Personal Information
+    // Basic Information
     firstName: '',
     lastName: '',
     mobileNumber: '',
-    dateOfBirth: '',
+    type: 'Full-time', // Part-time or Full-time
+    
+    // Professional Information
+    experienceLevel: 'Fresher', // Fresher or Experienced
+    previousJobTitle: '',
+    experienceYears: '',
+    wantedJobTitle: '',
+    skills: '',
+    
+    // Family Details
+    fatherName: '',
+    fatherMobileNumber: '',
+    
+    // Address Details
+    address: '',
     city: '',
     state: '',
     
-    // Professional Information
-    qualification: '',
-    experience: '',
-    skills: '',
-    
-    // Aadhar Information
+    // Identity Information
     aadharNumber: '',
-    
-    // PAN Information
     panNumber: '',
     
-    // Emergency Contact
-    emergencyContactName: '',
-    emergencyContactRelation: '',
-    emergencyContactMobile: '',
-
     // Status Information
-    candidateStatus: 'available',
-    kycStatus: 'in progress',
+    candidateStatus: 'Open to Work',
+    kycStatus: 'Pending',
   });
 
   const [images, setImages] = useState({
@@ -110,13 +112,13 @@ const AddCandidate = () => {
         [fieldName]: true,
       }));
 
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('fieldName', fieldName);
+      const formDataUpload = new FormData();
+      formDataUpload.append('file', file);
+      formDataUpload.append('fieldName', fieldName);
 
       const response = await axios.post(
         `${API_URL}/upload-image`,
-        formData,
+        formDataUpload,
         {
           headers: {
             'Content-Type': 'multipart/form-data',
@@ -171,26 +173,14 @@ const AddCandidate = () => {
 
   const validateForm = () => {
     const required = [
-      'firstName', 'lastName', 'mobileNumber', 'dateOfBirth',
-      'city', 'state', 'aadharNumber', 'panNumber',
-      'emergencyContactName', 'emergencyContactRelation', 'emergencyContactMobile'
+      'firstName', 'lastName', 'mobileNumber', 'type',
+      'experienceLevel', 'wantedJobTitle', 'skills',
+      'fatherName', 'fatherMobileNumber', 'address', 'city', 'state'
     ];
 
     for (let field of required) {
       if (!formData[field]) {
         setMessage(`Please fill in ${field}`);
-        setMessageType('error');
-        return false;
-      }
-    }
-
-    // Check if all images are selected or uploaded
-    // Accept either uploadedImages (from backend) or images (from local selection)
-    const imageFields = ['profilePhoto', 'aadharFront', 'aadharBack', 'panCard'];
-    
-    for (let field of imageFields) {
-      if (!uploadedImages[field] && !images[field]) {
-        setMessage(`Please select and upload ${field}`);
         setMessageType('error');
         return false;
       }
@@ -264,7 +254,7 @@ const AddCandidate = () => {
     }
   };
 
-  const ImageUploadField = ({ label, fieldName, required = true }) => {
+  const ImageUploadField = ({ label, fieldName, required = false }) => {
     const displayImage = imagePreviews[fieldName] || uploadedImages[fieldName];
     
     return (
@@ -362,10 +352,10 @@ const AddCandidate = () => {
       )}
 
       <form className="add-candidate-form" onSubmit={handleSubmit}>
-        {/* Personal Information Section */}
+        {/* Basic Information Section */}
         <div className="form-section">
           <div className="section-header">
-            <h2>Personal Information</h2>
+            <h2>Basic Information</h2>
           </div>
 
           <div className="form-row">
@@ -417,24 +407,158 @@ const AddCandidate = () => {
             </div>
             <div className="form-group">
               <label className="form-label">
-                Date of Birth <span className="required">*</span>
+                Job Type <span className="required">*</span>
               </label>
-              <input
-                type="date"
-                name="dateOfBirth"
-                value={formData.dateOfBirth}
+              <select
+                name="type"
+                value={formData.type}
                 onChange={handleInputChange}
                 className="form-input"
                 required
-              />
+              >
+                <option value="Full-time">Full-time</option>
+                <option value="Part-time">Part-time</option>
+              </select>
             </div>
+          </div>
+        </div>
+
+        {/* Professional Information Section */}
+        <div className="form-section">
+          <div className="section-header">
+            <h2>Professional Information</h2>
           </div>
 
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">
-                City <span className="required">*</span>
+                Experience Level <span className="required">*</span>
               </label>
+              <select
+                name="experienceLevel"
+                value={formData.experienceLevel}
+                onChange={handleInputChange}
+                className="form-input"
+                required
+              >
+                <option value="Fresher">Fresher</option>
+                <option value="Experienced">Experienced</option>
+              </select>
+            </div>
+            {formData.experienceLevel === 'Experienced' && (
+              <>
+                <div className="form-group">
+                  <label className="form-label">Previous Job Title <span className="required">*</span></label>
+                  <input
+                    type="text"
+                    name="previousJobTitle"
+                    value={formData.previousJobTitle}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="e.g. Sales Executive"
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">Exp Years <span className="required">*</span></label>
+                  <input
+                    type="number"
+                    name="experienceYears"
+                    value={formData.experienceYears}
+                    onChange={handleInputChange}
+                    className="form-input"
+                    placeholder="Years of experience"
+                    required
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Wanted Job Title (Comma separated) <span className="required">*</span></label>
+            <textarea
+              name="wantedJobTitle"
+              value={formData.wantedJobTitle}
+              onChange={handleInputChange}
+              className="form-input"
+              placeholder="e.g. Driver, Cook, Security Guard"
+              rows="2"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Skills (Comma separated) <span className="required">*</span></label>
+            <textarea
+              name="skills"
+              value={formData.skills}
+              onChange={handleInputChange}
+              className="form-input"
+              placeholder="e.g. Driving, Cooking, First Aid"
+              rows="2"
+              required
+            />
+          </div>
+        </div>
+
+        {/* Family Details Section */}
+        <div className="form-section">
+          <div className="section-header">
+            <h2>Family Details</h2>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Father's Name <span className="required">*</span></label>
+              <input
+                type="text"
+                name="fatherName"
+                value={formData.fatherName}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="Enter father's name"
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Father's Mobile Number <span className="required">*</span></label>
+              <input
+                type="tel"
+                name="fatherMobileNumber"
+                value={formData.fatherMobileNumber}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="Enter mobile number"
+                pattern="[0-9]{10}"
+                required
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Address Details Section */}
+        <div className="form-section">
+          <div className="section-header">
+            <h2>Address Details</h2>
+          </div>
+
+          <div className="form-group">
+            <label className="form-label">Full Address <span className="required">*</span></label>
+            <textarea
+              name="address"
+              value={formData.address}
+              onChange={handleInputChange}
+              className="form-input"
+              placeholder="Enter full address"
+              rows="2"
+              required
+            />
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">City <span className="required">*</span></label>
               <input
                 type="text"
                 name="city"
@@ -446,9 +570,7 @@ const AddCandidate = () => {
               />
             </div>
             <div className="form-group">
-              <label className="form-label">
-                State <span className="required">*</span>
-              </label>
+              <label className="form-label">State <span className="required">*</span></label>
               <input
                 type="text"
                 name="state"
@@ -460,174 +582,8 @@ const AddCandidate = () => {
               />
             </div>
           </div>
-
-          <ImageUploadField label="Profile Photo" fieldName="profilePhoto" />
         </div>
 
-        {/* Professional Information Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <h2>Professional Information</h2>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              Qualification
-            </label>
-            <textarea
-              name="qualification"
-              value={formData.qualification}
-              onChange={handleInputChange}
-              className="form-input"
-              placeholder="Enter qualification details (e.g., B.Tech, M.A, etc.)"
-              rows="3"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              Experience
-            </label>
-            <textarea
-              name="experience"
-              value={formData.experience}
-              onChange={handleInputChange}
-              className="form-input"
-              placeholder="Enter experience details"
-              rows="3"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              Skills
-            </label>
-            <textarea
-              name="skills"
-              value={formData.skills}
-              onChange={handleInputChange}
-              className="form-input"
-              placeholder="Enter skills (comma-separated)"
-              rows="3"
-            />
-          </div>
-        </div>
-
-        {/* Aadhar Information Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <h2>Aadhar Card Information</h2>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              Aadhar Number <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              name="aadharNumber"
-              value={formData.aadharNumber}
-              onChange={handleInputChange}
-              className="form-input"
-              placeholder="Enter 12-digit Aadhar number"
-              pattern="[0-9]{12}"
-              required
-            />
-          </div>
-
-          <div className="form-row">
-            <ImageUploadField label="Aadhar Front" fieldName="aadharFront" />
-            <ImageUploadField label="Aadhar Back" fieldName="aadharBack" />
-          </div>
-        </div>
-
-        {/* PAN Information Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <h2>PAN Card Information</h2>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              PAN Number <span className="required">*</span>
-            </label>
-            <input
-              type="text"
-              name="panNumber"
-              value={formData.panNumber}
-              onChange={handleInputChange}
-              className="form-input"
-              placeholder="Enter PAN number"
-              pattern="[A-Z]{5}[0-9]{4}[A-Z]{1}"
-              required
-            />
-          </div>
-
-          <ImageUploadField label="PAN Card" fieldName="panCard" />
-        </div>
-
-        {/* Emergency Contact Section */}
-        <div className="form-section">
-          <div className="section-header">
-            <h2>Emergency Contact Information</h2>
-          </div>
-
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label">
-                Contact Name <span className="required">*</span>
-              </label>
-              <input
-                type="text"
-                name="emergencyContactName"
-                value={formData.emergencyContactName}
-                onChange={handleInputChange}
-                className="form-input"
-                placeholder="Enter contact name"
-                required
-              />
-            </div>
-            <div className="form-group">
-              <label className="form-label">
-                Relation <span className="required">*</span>
-              </label>
-              <select
-                name="emergencyContactRelation"
-                value={formData.emergencyContactRelation}
-                onChange={handleInputChange}
-                className="form-input"
-                required
-              >
-                <option value="">Select relation</option>
-                <option value="Father">Father</option>
-                <option value="Mother">Mother</option>
-                <option value="Brother">Brother</option>
-                <option value="Sister">Sister</option>
-                <option value="Spouse">Spouse</option>
-                <option value="Son">Son</option>
-                <option value="Daughter">Daughter</option>
-                <option value="Friend">Friend</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">
-              Mobile Number <span className="required">*</span>
-            </label>
-            <input
-              type="tel"
-              name="emergencyContactMobile"
-              value={formData.emergencyContactMobile}
-              onChange={handleInputChange}
-              className="form-input"
-              placeholder="Enter 10-digit mobile number"
-              pattern="[0-9]{10}"
-              required
-            />
-          </div>
-        </div>
         {/* Status Information Section */}
         <div className="form-section">
           <div className="section-header">
@@ -637,7 +593,7 @@ const AddCandidate = () => {
           <div className="form-row">
             <div className="form-group">
               <label className="form-label">
-                Allotment Status <span className="required">*</span>
+                Candidate Status <span className="required">*</span>
               </label>
               <select
                 name="candidateStatus"
@@ -646,7 +602,7 @@ const AddCandidate = () => {
                 className="form-input"
                 required
               >
-                <option value="available">Available</option>
+                <option value="Open to Work">Open to Work</option>
                 <option value="allotted">Allotted</option>
                 <option value="on-leave">On Leave</option>
                 <option value="resigned">Resigned</option>
@@ -663,37 +619,70 @@ const AddCandidate = () => {
                 className="form-input"
                 required
               >
-                <option value="in progress">In Progress</option>
-                <option value="verified">Verified</option>
-                <option value="rejected">Rejected</option>
-                <option value="pending">Pending</option>
+                <option value="Pending">Pending</option>
+                <option value="Verification in Progress">Verification in Progress</option>
+                <option value="Verified">Verified</option>
+                <option value="Rejected">Rejected</option>
               </select>
             </div>
           </div>
         </div>
 
-        {/* Form Actions */}
+        {/* Document Section (Optional during Add) */}
+        <div className="form-section">
+          <div className="section-header">
+            <h2>Documents & Identity</h2>
+          </div>
+
+          <div className="form-row">
+            <div className="form-group">
+              <label className="form-label">Aadhar Number</label>
+              <input
+                type="text"
+                name="aadharNumber"
+                value={formData.aadharNumber}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="12-digit Aadhar"
+                pattern="[0-9]{12}"
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">PAN Number</label>
+              <input
+                type="text"
+                name="panNumber"
+                value={formData.panNumber}
+                onChange={handleInputChange}
+                className="form-input"
+                placeholder="PAN Number"
+              />
+            </div>
+          </div>
+
+          <div className="form-row">
+            <ImageUploadField label="Profile Photo" fieldName="profilePhoto" />
+            <ImageUploadField label="Aadhar Front" fieldName="aadharFront" />
+          </div>
+          <div className="form-row">
+            <ImageUploadField label="Aadhar Back" fieldName="aadharBack" />
+            <ImageUploadField label="PAN Card" fieldName="panCard" />
+          </div>
+        </div>
+
         <div className="form-actions">
-          <button
-            type="button"
-            className="btn-secondary"
-            onClick={() => navigate('/candidates')}
-            disabled={loading}
-          >
-            Cancel
-          </button>
-          <button
-            type="submit"
-            className="btn-primary"
+          <button 
+            type="submit" 
+            className="btn-primary submit-btn" 
             disabled={loading}
           >
             {loading ? (
               <>
-                <Loader size={18} className="spin" /> Saving...
+                <Loader size={20} className="spin" /> Creating...
               </>
             ) : (
               <>
-                <Save size={18} /> Save Candidate
+                <Save size={20} /> Create Candidate
               </>
             )}
           </button>
