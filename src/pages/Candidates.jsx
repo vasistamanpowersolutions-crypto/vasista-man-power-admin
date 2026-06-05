@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
   Search, Filter, Plus, Mail, Phone, MapPin, 
-  ShieldCheck, Eye, Edit, Trash2, RefreshCw,
+  ShieldCheck, Eye, RefreshCw,
   MoreVertical, ChevronLeft, ChevronRight
 } from 'lucide-react';
 import './Candidates.css';
@@ -146,8 +146,6 @@ const Candidates = () => {
                         >
                           <Eye size={16} />
                         </button>
-                        <button className="action-icon edit" onClick={(e) => e.stopPropagation()}><Edit size={16} /></button>
-                        <button className="action-icon delete" onClick={(e) => e.stopPropagation()}><Trash2 size={16} /></button>
                       </div>
                     </td>
                   </tr>

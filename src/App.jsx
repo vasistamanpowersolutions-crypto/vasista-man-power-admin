@@ -10,6 +10,7 @@ import AddCandidate from './pages/AddCandidate';
 import Clients from './pages/BusinessOwners';
 import AddBusinessOwner from './pages/AddBusinessOwner';
 import BusinessOwnerDetails from './pages/BusinessOwnerDetails';
+import JobRoles from './pages/JobRoles';
 import Login from './pages/Login';
 import { initSecurity } from './utils/security';
 import './App.css';
@@ -42,7 +43,7 @@ function App() {
                     <Route path="/clients/:id" element={<BusinessOwnerDetails />} />
                     
                     {/* Placeholder for other routes */}
-                    <Route path="/jobs" element={<div className="page-placeholder"><h2>Jobs Management</h2><p>Coming Soon...</p></div>} />
+                    <Route path="/jobs" element={<JobRoles />} />
                     <Route path="/employees" element={<div className="page-placeholder"><h2>Employees Management</h2><p>Coming Soon...</p></div>} />
                     <Route path="/assignments" element={<div className="page-placeholder"><h2>Assignments Management</h2><p>Coming Soon...</p></div>} />
                     <Route path="/attendance" element={<div className="page-placeholder"><h2>Attendance Tracking</h2><p>Coming Soon...</p></div>} />
