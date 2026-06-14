@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { 
-  Search, Filter, Plus, Mail, Phone, MapPin, 
+  Search, Filter, Plus, Mail, Phone, PhoneCall, MapPin, 
   Building2, Briefcase, UserCheck, RefreshCw,
   Eye, Edit, Trash2, ChevronLeft, ChevronRight,
   Globe, Fingerprint
@@ -137,7 +137,19 @@ const Clients = () => {
                     </td>
                     <td>
                       <div className="contact-info">
-                        <span><Phone size={12} /> {client.phone || client.mobileNumber}</span>
+                        <span className="contact-phone">
+                          <Phone size={12} /> {client.phone || client.mobileNumber || 'N/A'}
+                          {(client.phone || client.mobileNumber) && (
+                            <a 
+                              href={`tel:${client.phone || client.mobileNumber}`} 
+                              className="call-btn" 
+                              title="Call client"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <PhoneCall size={12} />
+                            </a>
+                          )}
+                        </span>
                         <span className="email"><Mail size={12} /> {client.email || 'N/A'}</span>
                       </div>
                     </td>

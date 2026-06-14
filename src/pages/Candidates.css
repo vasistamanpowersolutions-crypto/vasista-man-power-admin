@@ -178,6 +178,38 @@
   font-weight: 600;
 }
 
+.contact-phone {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.call-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--green-bg);
+  color: var(--success);
+  margin-left: 6px;
+  transition: var(--transition);
+  box-shadow: 0 2px 4px rgba(5, 205, 153, 0.15);
+}
+
+.call-btn:hover {
+  background: var(--success);
+  color: white;
+  transform: scale(1.15) translateY(-1px);
+  box-shadow: 0 4px 8px rgba(5, 205, 153, 0.3);
+}
+
+.call-btn svg {
+  width: 10px;
+  height: 10px;
+}
+
 .contact-info .email {
   font-size: 11px;
   color: var(--text-secondary);

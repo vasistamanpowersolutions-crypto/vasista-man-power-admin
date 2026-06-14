@@ -3,9 +3,108 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import {
   ArrowLeft, Upload, AlertCircle, CheckCircle,
-  Loader, X, Image as ImageIcon, Save, Building2
+  Loader, X, Image as ImageIcon, Save, Building2, ChevronDown, Search
 } from 'lucide-react';
+import { State, City } from 'country-state-city';
+import { geoData } from '../utils/geoData';
 import './AddCandidate.css'; // Reusing form styles
+
+// Custom single-select dropdown component (styled with vanilla CSS)
+const CustomDropdown = ({
+  options = [],
+  value = '',
+  onChange,
+  placeholder = 'Select option',
+  disabled = false,
+  required = false,
+  label = '',
+  showOthers = false
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const dropdownRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  let filteredOptions = options.filter(option =>
+    option.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (showOthers) {
+    const hasOthers = filteredOptions.some(opt => opt.toLowerCase() === 'others');
+    if (!hasOthers) {
+      if (!search || 'others'.includes(search.toLowerCase()) || filteredOptions.length === 0) {
+        filteredOptions = [...filteredOptions, 'Others'];
+      }
+    }
+  }
+
+  const handleSelect = (option) => {
+    onChange(option);
+    setIsOpen(false);
+    setSearch('');
+  };
+
+  return (
+    <div className="form-group custom-dropdown-container" ref={dropdownRef}>
+      {label && (
+        <label className="form-label">
+          {label} {required && <span className="required">*</span>}
+        </label>
+      )}
+      <div
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className={`custom-dropdown-trigger ${disabled ? 'disabled' : ''} ${isOpen ? 'open' : ''}`}
+      >
+        <span className={value ? 'selected-text' : 'placeholder'}>
+          {value || placeholder}
+        </span>
+        <ChevronDown size={16} />
+      </div>
+
+      {isOpen && !disabled && (
+        <div className="custom-dropdown-menu">
+          <div className="custom-dropdown-search-wrapper">
+            <Search size={14} />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="custom-dropdown-search-input"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+          <div className="custom-dropdown-options-list">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => handleSelect(option)}
+                  className={`custom-dropdown-option ${value === option ? 'selected' : ''}`}
+                >
+                  {option}
+                </div>
+              ))
+            ) : (
+              <div className="custom-dropdown-option" style={{ color: 'var(--text-muted)', textAlign: 'center', cursor: 'default' }}>
+                No options found
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
 
@@ -22,10 +121,40 @@ const AddBusinessOwner = () => {
     ownerName: '',
     address: '',
     city: '',
+    district: '',
     state: '',
     wantedJobRoles: '',
     docType: 'GST', // Default
   });
+
+  // Get states from npm package
+  const statesList = State.getStatesOfCountry("IN").map(s => s.name);
+
+  // Resolve districts from static local geoData
+  const getDistrictsList = () => {
+    if (!formData.state) return [];
+    let lookupName = formData.state;
+    if (lookupName === 'Jammu and Kashmir') lookupName = 'Jammu & Kashmir';
+    return Object.keys(geoData[lookupName] || {});
+  };
+
+  // Resolve cities from package + local geoData
+  const getCitiesList = () => {
+    if (!formData.state) return [];
+    const selectedStateObj = State.getStatesOfCountry("IN").find(s => {
+      const n1 = s.name.toLowerCase().replace(/and/g, '&');
+      const n2 = formData.state?.toLowerCase().replace(/and/g, '&');
+      return n1 === n2 || s.name === formData.state;
+    });
+    const stateCode = selectedStateObj ? selectedStateObj.isoCode : "";
+    const packageCities = stateCode ? City.getCitiesOfState("IN", stateCode).map(c => c.name) : [];
+    
+    let lookupName = formData.state;
+    if (lookupName === 'Jammu and Kashmir') lookupName = 'Jammu & Kashmir';
+    const localCities = (formData.district && geoData[lookupName]?.[formData.district]) || [];
+    
+    return Array.from(new Set([...localCities, ...packageCities]));
+  };
 
   const [images, setImages] = useState({
     businessFront: null,
@@ -216,15 +345,42 @@ const AddBusinessOwner = () => {
             <label className="form-label">Business Address</label>
             <textarea name="address" value={formData.address} onChange={handleInputChange} className="form-input" rows="2" placeholder="Full office address"></textarea>
           </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label">City</label>
-              <input type="text" name="city" value={formData.city} onChange={handleInputChange} className="form-input" placeholder="City" />
-            </div>
-            <div className="form-group">
-              <label className="form-label">State</label>
-              <input type="text" name="state" value={formData.state} onChange={handleInputChange} className="form-input" placeholder="State" />
-            </div>
+          <div className="form-row" style={{ marginBottom: '20px' }}>
+            <CustomDropdown
+              label="State"
+              required
+              options={statesList}
+              value={formData.state}
+              onChange={(val) => {
+                setFormData(prev => ({ ...prev, state: val, district: '', city: '' }));
+              }}
+              placeholder="Select State"
+              showOthers={true}
+            />
+            <CustomDropdown
+              label="District"
+              required
+              disabled={!formData.state}
+              options={formData.state && formData.state !== 'Others' ? getDistrictsList() : []}
+              value={formData.district}
+              onChange={(val) => {
+                setFormData(prev => ({ ...prev, district: val, city: '' }));
+              }}
+              placeholder={formData.state ? "Select District" : "Select State First"}
+              showOthers={true}
+            />
+            <CustomDropdown
+              label="City / Town"
+              required
+              disabled={!formData.district}
+              options={formData.district && formData.district !== 'Others' && formData.state !== 'Others' ? getCitiesList() : []}
+              value={formData.city}
+              onChange={(val) => {
+                setFormData(prev => ({ ...prev, city: val }));
+              }}
+              placeholder={formData.district ? "Select City / Town" : "Select District First"}
+              showOthers={true}
+            />
           </div>
           <div className="form-group">
             <label className="form-label">Wanted Job Roles (Comma separated)</label>

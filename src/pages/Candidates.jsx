@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { 
-  Search, Filter, Plus, Mail, Phone, MapPin, 
+  Search, Filter, Plus, Mail, Phone, PhoneCall, MapPin, 
   ShieldCheck, Eye, RefreshCw,
   MoreVertical, ChevronLeft, ChevronRight
 } from 'lucide-react';
@@ -116,7 +116,19 @@ const Candidates = () => {
                     </td>
                     <td>
                       <div className="contact-info">
-                        <span><Phone size={12} /> {can.mobileNumber}</span>
+                        <span className="contact-phone">
+                          <Phone size={12} /> {can.mobileNumber || 'N/A'}
+                          {can.mobileNumber && (
+                            <a 
+                              href={`tel:${can.mobileNumber}`} 
+                              className="call-btn" 
+                              title="Call candidate"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <PhoneCall size={12} />
+                            </a>
+                          )}
+                        </span>
                         <span className="email"><Mail size={12} /> {can.email || 'N/A'}</span>
                       </div>
                     </td>

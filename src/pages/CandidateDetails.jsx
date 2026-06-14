@@ -7,12 +7,111 @@ import {
   ShieldCheck, CreditCard, Users, ExternalLink,
   Download, Eye, Image as ImageIcon, Loader,
   Trash2, Edit2, Save, Plus, Search, Building2,
-  CheckCircle2, Clock
+  CheckCircle2, Clock, ChevronDown
 } from 'lucide-react';
 import Modal from '../components/Modal';
+import { State, City } from 'country-state-city';
+import { geoData } from '../utils/geoData';
 import './CandidateDetails.css';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+
+// Custom single-select dropdown component (styled with vanilla CSS)
+const CustomDropdown = ({
+  options = [],
+  value = '',
+  onChange,
+  placeholder = 'Select option',
+  disabled = false,
+  required = false,
+  label = '',
+  showOthers = false
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [search, setSearch] = useState('');
+  const dropdownRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  let filteredOptions = options.filter(option =>
+    option.toLowerCase().includes(search.toLowerCase())
+  );
+
+  if (showOthers) {
+    const hasOthers = filteredOptions.some(opt => opt.toLowerCase() === 'others');
+    if (!hasOthers) {
+      if (!search || 'others'.includes(search.toLowerCase()) || filteredOptions.length === 0) {
+        filteredOptions = [...filteredOptions, 'Others'];
+      }
+    }
+  }
+
+  const handleSelect = (option) => {
+    onChange(option);
+    setIsOpen(false);
+    setSearch('');
+  };
+
+  return (
+    <div className="form-group custom-dropdown-container" ref={dropdownRef}>
+      {label && (
+        <label className="form-label">
+          {label} {required && <span className="required">*</span>}
+        </label>
+      )}
+      <div
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className={`custom-dropdown-trigger ${disabled ? 'disabled' : ''} ${isOpen ? 'open' : ''}`}
+      >
+        <span className={value ? 'selected-text' : 'placeholder'}>
+          {value || placeholder}
+        </span>
+        <ChevronDown size={16} />
+      </div>
+
+      {isOpen && !disabled && (
+        <div className="custom-dropdown-menu">
+          <div className="custom-dropdown-search-wrapper">
+            <Search size={14} />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search..."
+              className="custom-dropdown-search-input"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+          <div className="custom-dropdown-options-list">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map((option, idx) => (
+                <div
+                  key={idx}
+                  onClick={() => handleSelect(option)}
+                  className={`custom-dropdown-option ${value === option ? 'selected' : ''}`}
+                >
+                  {option}
+                </div>
+              ))
+            ) : (
+              <div className="custom-dropdown-option" style={{ color: 'var(--text-muted)', textAlign: 'center', cursor: 'default' }}>
+                No options found
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const CandidateDetails = () => {
   const { id } = useParams();
@@ -28,6 +127,34 @@ const CandidateDetails = () => {
   const [editSection, setEditSection] = useState('');
   const [editData, setEditData] = useState({});
   const [saving, setSaving] = useState(false);
+  // Get states from npm package
+  const statesList = State.getStatesOfCountry("IN").map(s => s.name);
+
+  // Resolve districts from static local geoData
+  const getDistrictsList = () => {
+    if (!editData.state) return [];
+    let lookupName = editData.state;
+    if (lookupName === 'Jammu and Kashmir') lookupName = 'Jammu & Kashmir';
+    return Object.keys(geoData[lookupName] || {});
+  };
+
+  // Resolve cities from package + local geoData
+  const getCitiesList = () => {
+    if (!editData.state) return [];
+    const selectedStateObj = State.getStatesOfCountry("IN").find(s => {
+      const n1 = s.name.toLowerCase().replace(/and/g, '&');
+      const n2 = editData.state?.toLowerCase().replace(/and/g, '&');
+      return n1 === n2 || s.name === editData.state;
+    });
+    const stateCode = selectedStateObj ? selectedStateObj.isoCode : "";
+    const packageCities = stateCode ? City.getCitiesOfState("IN", stateCode).map(c => c.name) : [];
+    
+    let lookupName = editData.state;
+    if (lookupName === 'Jammu and Kashmir') lookupName = 'Jammu & Kashmir';
+    const localCities = (editData.district && geoData[lookupName]?.[editData.district]) || [];
+    
+    return Array.from(new Set([...localCities, ...packageCities]));
+  };
 
   // Allotment Form States
   const [businesses, setBusinesses] = useState([]);
@@ -186,10 +313,11 @@ const CandidateDetails = () => {
           <button className="edit-section-btn" onClick={() => handleEditClick('Personal')}><Edit2 size={14} /></button>
         </div>
         <div className="data-row"><span className="data-label">Full Name</span><span className="data-value">{candidate.firstName} {candidate.lastName}</span></div>
+        <div className="data-row"><span className="data-label">Date of Birth</span><span className="data-value">{candidate.dob ? new Date(candidate.dob).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A'}</span></div>
         <div className="data-row"><span className="data-label">Mobile</span><span className="data-value">{candidate.mobileNumber}</span></div>
         <div className="data-row"><span className="data-label">Father's Name</span><span className="data-value">{candidate.fatherName || 'N/A'}</span></div>
         <div className="data-row"><span className="data-label">Father's Mobile</span><span className="data-value">{candidate.fatherMobileNumber || 'N/A'}</span></div>
-        <div className="data-row"><span className="data-label">Address</span><span className="data-value">{candidate.address || 'N/A'}, {candidate.city}, {candidate.state}</span></div>
+        <div className="data-row"><span className="data-label">Address</span><span className="data-value">{candidate.address || 'N/A'}, {candidate.district ? candidate.district + ', ' : ''}{candidate.city}, {candidate.state}</span></div>
       </div>
 
       <div className="info-section">
@@ -348,12 +476,43 @@ const CandidateDetails = () => {
               <>
                 <div className="form-group"><label>First Name</label><input name="firstName" value={editData.firstName} onChange={handleEditChange} className="form-control" /></div>
                 <div className="form-group"><label>Last Name</label><input name="lastName" value={editData.lastName} onChange={handleEditChange} className="form-control" /></div>
+                <div className="form-group"><label>Date of Birth *</label><input type="date" name="dob" value={editData.dob || ''} onChange={handleEditChange} className="form-control" required /></div>
                 <div className="form-group"><label>Mobile</label><input name="mobileNumber" value={editData.mobileNumber} onChange={handleEditChange} className="form-control" /></div>
                 <div className="form-group"><label>Father Name</label><input name="fatherName" value={editData.fatherName} onChange={handleEditChange} className="form-control" /></div>
                 <div className="form-group"><label>Father Mobile</label><input name="fatherMobileNumber" value={editData.fatherMobileNumber} onChange={handleEditChange} className="form-control" /></div>
-                <div className="form-group" style={{ gridColumn: 'span 2' }}><label>Address</label><textarea name="address" value={editData.address} onChange={handleEditChange} className="form-control" rows="2" /></div>
-                <div className="form-group"><label>City</label><input name="city" value={editData.city} onChange={handleEditChange} className="form-control" /></div>
-                <div className="form-group"><label>State</label><input name="state" value={editData.state} onChange={handleEditChange} className="form-control" /></div>
+                <div className="form-group" style={{ gridColumn: 'span 2' }}><label>Address</label><textarea name="address" value={editData.address || ''} onChange={handleEditChange} className="form-control" rows="2" /></div>
+                <CustomDropdown
+                  label="State"
+                  options={statesList}
+                  value={editData.state || ''}
+                  onChange={(val) => {
+                    setEditData(prev => ({ ...prev, state: val, district: '', city: '' }));
+                  }}
+                  placeholder="Select State"
+                  showOthers={true}
+                />
+                <CustomDropdown
+                  label="District"
+                  disabled={!editData.state}
+                  options={editData.state && editData.state !== 'Others' ? getDistrictsList() : []}
+                  value={editData.district || ''}
+                  onChange={(val) => {
+                    setEditData(prev => ({ ...prev, district: val, city: '' }));
+                  }}
+                  placeholder={editData.state ? "Select District" : "Select State First"}
+                  showOthers={true}
+                />
+                <CustomDropdown
+                  label="City"
+                  disabled={!editData.district}
+                  options={editData.district && editData.district !== 'Others' && editData.state !== 'Others' ? getCitiesList() : []}
+                  value={editData.city || ''}
+                  onChange={(val) => {
+                    setEditData(prev => ({ ...prev, city: val }));
+                  }}
+                  placeholder={editData.district ? "Select City" : "Select District First"}
+                  showOthers={true}
+                />
               </>
             )}
             {editSection === 'Professional' && (
